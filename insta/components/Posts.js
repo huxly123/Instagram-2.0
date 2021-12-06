@@ -10,14 +10,14 @@ const posts = [
     caption: "DOpeee",
   },
   {
-    id: "123",
+    id: "12",
     username: "huxly",
     userImg: "https://links.papareact.com/jjm",
     img: "https://links.papareact.com/jjm",
     caption: "DOpeee",
   },
   {
-    id: "123",
+    id: "13",
     username: "huxly",
     userImg: "https://links.papareact.com/jjm",
     img: "https://links.papareact.com/jjm",
