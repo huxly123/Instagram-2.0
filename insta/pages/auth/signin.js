@@ -1,11 +1,14 @@
+import { async } from '@firebase/util'
 import React from 'react'
 
-function signin() {
+export const signin=()=> {
     return (
         <div>
             signin
         </div>
     )
 }
+export async function getServerSideProps() {
+    
+}
 
-export default signin
