@@ -1,4 +1,7 @@
-import React from "react";
+import { collection, onSnapshot, orderBy, query } from "@firebase/firestore";
+import React, { useEffect } from "react";
+import { useState } from "react/cjs/react.development";
+import { db } from "../firebase";
 import Post from "./Post";
 
 const posts = [
@@ -26,6 +29,18 @@ const posts = [
 ];
 
 function Posts() {
+
+  const [post, setPost] = useState([])
+  
+  useEffect(() => {
+  const unsubscribe=  onSnapshot(query(collection(db, 'posts'), orderBy('timestamp', 'desc')), snapshot => {
+    setPost(snapshot.docs)
+    })
+    
+    return unsubscribe
+
+},[db])
+
   return (
     <div>
       {posts.map((post) => (
@@ -41,5 +56,5 @@ function Posts() {
     </div>
   );
 }
-
+//4.30 hrs
 export default Posts;
