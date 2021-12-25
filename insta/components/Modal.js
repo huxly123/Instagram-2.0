@@ -1,11 +1,53 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { modalState } from "../atoms/modalAtom";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import {CameraIcon} from '@heroicons/react/outline'
+import { CameraIcon } from "@heroicons/react/outline";
+import { db, storage } from "../firebase"
+import { useSession } from 'next-auth/react'
+import {addDoc,collection,serverTimestamp} from "@firebase/firestore"
 function Modal() {
+  const {data:session}=useSession()
   const [open, setOpen] = useRecoilState(modalState);
+
+  const filePickerRef = useRef(null);
+  const captionRef = useRef(null)
+  const [loading,setLoading]=useState(false)
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+
+  const uploadPost = async () => {
+    if (loading) return;
+    setLoading(true)
+
+    //create post add to firestore 'post' colllecttion
+    //get post ID for created post
+    //upload img to firebase storage with post ID
+    //get download URL from fb storage and update the original post with image
+    const documentRef = await addDoc(collection(db, 'posts'), {
+      username: session.user.username,
+      caption: captionRef.current.value,
+      profileImg: session.user.image,
+      timestamp:serverTimestamp()
+    })
+}
+
+
+
+
+  //he is selecting the file using useref by clicking the hidden input file
+  const addImageToPost = (e) => {
+    const reader = new FileReader();
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      setSelectedFile(readerEvent.target.result);
+    };
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -44,20 +86,41 @@ function Modal() {
           >
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
               <div>
-                <div  className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 cursor-pointer">
-                  <CameraIcon
-                    className="h-6 w-6 text-red-600 "
-                    aria-hidden="true"
+                {selectedFile ? (
+                  <img
+                    src={selectedFile}
+                    alt=""
+                    onClick={() => {
+                      setSelectedFile(null);
+                    }}
                   />
-                </div>
+                ) : (
+                  <div
+                    onClick={() => filePickerRef.current.click()}
+                    className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 cursor-pointer"
+                  >
+                    <CameraIcon
+                      className="h-6 w-6 text-red-600 "
+                      aria-hidden="true"
+                    />
+                  </div>
+                )}
+
                 <div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title
                       as="h3"
                       className="text-lg leading-6 font-medium text-gray-900 "
-                    >Upload a photo</Dialog.Title>
+                    >
+                      Upload a photo
+                    </Dialog.Title>
                     <div>
-                      <input type="file" hidden />
+                      <input
+                        type="file"
+                        hidden
+                        ref={filePickerRef}
+                        onChange={addImageToPost}
+                      />
                     </div>
                   </div>
                   <div className="mt-2">
@@ -65,6 +128,7 @@ function Modal() {
                       className="border-none focus:ring-0 w-full text-center "
                       type="text"
                       placeholder="Please enter a caption..."
+                      ref={captionRef}
                     />
                   </div>
                 </div>
@@ -84,5 +148,5 @@ function Modal() {
     </Transition.Root>
   );
 }
-//3.55 hrs
+//4.03 hrs
 export default Modal;
