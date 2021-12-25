@@ -4,38 +4,59 @@ import { modalState } from "../atoms/modalAtom";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { CameraIcon } from "@heroicons/react/outline";
-import { db, storage } from "../firebase"
-import { useSession } from 'next-auth/react'
-import {addDoc,collection,serverTimestamp} from "@firebase/firestore"
+import { db, storage } from "../firebase";
+import { useSession } from "next-auth/react";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+  doc
+} from "@firebase/firestore";
+import { ref, getDownloadURL, uploadString } from "@firebase/storage";
+
 function Modal() {
-  const {data:session}=useSession()
+  const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modalState);
 
   const filePickerRef = useRef(null);
-  const captionRef = useRef(null)
-  const [loading,setLoading]=useState(false)
+  const captionRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState(null);
 
-
   const uploadPost = async () => {
     if (loading) return;
-    setLoading(true)
+    setLoading(true);
 
     //create post add to firestore 'post' colllecttion
     //get post ID for created post
     //upload img to firebase storage with post ID
     //get download URL from fb storage and update the original post with image
-    const documentRef = await addDoc(collection(db, 'posts'), {
+    const documentRef = await addDoc(collection(db, "posts"), {
       username: session.user.username,
       caption: captionRef.current.value,
       profileImg: session.user.image,
-      timestamp:serverTimestamp()
-    })
-}
+      timestamp: serverTimestamp(),
+    });
 
+    console.log("new doc added with id", documentRef.id);
 
+    const imageRef = ref(storage, `posts/${documentRef.id}/image`);
 
+    await uploadString(imageRef, selectedFile, "data_url").then(
+      async (snapshot) => {
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(doc(db, "posts", documentRef.id), {
+          image: downloadURL,
+        });
+      }
+    );
+
+    setOpen(false);
+    setLoading(false);
+    setSelectedFile(null);
+  };
 
   //he is selecting the file using useref by clicking the hidden input file
   const addImageToPost = (e) => {
@@ -136,9 +157,10 @@ function Modal() {
               <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
+                  disabled={!selectedFile}
                   className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300"
-                >
-                  Upload
+              onClick={uploadPost}  >
+                 {loading ? "Uploading...":"Upload Post"}
                 </button>
               </div>
             </div>
