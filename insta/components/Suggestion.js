@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import faker from "faker";
 
 function Suggestion() {
-  const [suggestions, setSuggestions] = useState([]);
+  // const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => {
-    const suggestions = [...Array(5)].map((_, i) => ({
-      ...faker.helpers.contextualCard(),
-      id: i,
-    }));
-    setSuggestions(suggestions);
-  }, []);
+  // useEffect(() => {
+  //   const suggestions = [...Array(5)].map((_, i) => ({
+  //     ...faker.helpers.contextualCard(),
+  //     id: i,
+  //   }));
+  //   setSuggestions(suggestions);
+  // }, []);
 
   return (
     <div className="mt-4 ml-10">
@@ -20,27 +20,96 @@ function Suggestion() {
         <button className="text-gray-600 font-semibold">See All</button>
       </div>
 
-      {suggestions.map((profile) => (
+      {
         <div
-          key={profile.id}
+          key={Math.random()}
           className="flex items-center justify-between mt-3"
         >
           <img
             className="w-10 h-10 rounded-full border p-[2px]"
-            src={profile.avatar}
+            src="https://picsum.photos/200/300?random=25"
             alt=""
           />
           <div className="flex-1 ml-4">
-            <h2 className="font-semibold text-sm">{profile.username}</h2>
-            <h3 className="text-xs text-gray-400">
-              Works at {profile.company.name}
-            </h3>
+            <h2 className="font-semibold text-sm">Henry</h2>
+            <h3 className="text-xs text-gray-400">Works at Acko</h3>
           </div>
           <button className="text-blue-400 text-sm font-bold">Follow</button>
         </div>
-      ))}
+      }
+      {
+        <div
+          key={Math.random()}
+          className="flex items-center justify-between mt-3"
+        >
+          <img
+            className="w-10 h-10 rounded-full border p-[2px]"
+            src="https://picsum.photos/200/300?random=28"
+            alt=""
+          />
+          <div className="flex-1 ml-4">
+            <h2 className="font-semibold text-sm">James</h2>
+            <h3 className="text-xs text-gray-400">Works at Uber</h3>
+          </div>
+          <button className="text-blue-400 text-sm font-bold">Follow</button>
+        </div>
+      }
+      {
+        <div
+          key={Math.random()}
+          className="flex items-center justify-between mt-3"
+        >
+          <img
+            className="w-10 h-10 rounded-full border p-[2px]"
+            src="https://picsum.photos/200/300?random=21"
+            alt=""
+          />
+          <div className="flex-1 ml-4">
+            <h2 className="font-semibold text-sm">Patrick</h2>
+            <h3 className="text-xs text-gray-400">Works at OLA</h3>
+          </div>
+          <button className="text-blue-400 text-sm font-bold">Follow</button>
+        </div>
+      }
+      {
+        <div
+          key={Math.random()}
+          className="flex items-center justify-between mt-3"
+        >
+          <img
+            className="w-10 h-10 rounded-full border p-[2px]"
+            src="https://picsum.photos/200/300?random=252"
+            alt=""
+          />
+          <div className="flex-1 ml-4">
+            <h2 className="font-semibold text-sm">Leo</h2>
+            <h3 className="text-xs text-gray-400">Works at Disney</h3>
+          </div>
+          <button className="text-blue-400 text-sm font-bold">Follow</button>
+        </div>
+      }
+      {
+        <div
+          key={Math.random()}
+          className="flex items-center justify-between mt-3"
+        >
+          <img
+            className="w-10 h-10 rounded-full border p-[2px]"
+            src="https://picsum.photos/200/300?random=23"
+            alt=""
+          />
+          <div className="flex-1 ml-4">
+            <h2 className="font-semibold text-sm">Marcus</h2>
+            <h3 className="text-xs text-gray-400">Works at Nolan</h3>
+          </div>
+          <button className="text-blue-400 text-sm font-bold">Follow</button>
+        </div>
+      }
     </div>
   );
 }
 
 export default Suggestion;
+
+
+//suggestions.map((profile) => (
